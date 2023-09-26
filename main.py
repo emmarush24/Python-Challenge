@@ -11,7 +11,6 @@ GreatestIncrease = ["", 0]
 GreatestDecrease = ["", 99999999999]
 MonthChange = []
 
-
 csvpath = os.path.join("Resources", "budget_data.csv")
 print(csvpath)
 
@@ -51,63 +50,48 @@ print(Answers)
 #PyPoll Challenge
 import os 
 import csv
-from collections import defaultdict
 
+#initialize variables
 TotalVotes = 0
 Candidates = []
 VotesPerCandidate = []
 Winner = []
+CandidatePercentages = []
 
-
+#import the data
 pypoll = os.path.join("Resources", "election_data.csv")
 print(pypoll)
 
-CandidateVotes = defaultdict(int)
-
+#read the data file
 with open(pypoll) as pyfile:
     pollreader = csv.reader(pyfile, delimiter=',')
     PollHeader = next(pollreader)
-    print(PollHeader)
+    #print(PollHeader)
+    #Initialize variables
     PollFirstRow = next(pollreader)
-    TotalVotes +=1
-    CandidateList = []
+    CandidateVotes = {}
     for i in pollreader:
         #Tracking Total Votes
         TotalVotes += 1
         #Tracking Candidates:
-        CandidateList.append(i[2])
-        FutureCandidate = next(CandidateList)
-        if CandidateList != FutureCandidate:
-            Candidates.append(i[2])
-    Candidate1 = Candidates[0]
-    Candidate2 = Candidates[1]
-    Candidate3 = Candidates[2]
-    CandidateCount = []
-    Candidate1Count = 0
-    Candidate2Count = 0
-    Candidate3Count = 0
-    for j in pollreader:
-        if j[2] == Candidate1:
-            Candidate1Count += 1
-        elif j[2] == Candidate2:
-            Candidate2Count += 1
+        candidate_name = i[2]
+        if candidate_name not in CandidateVotes:
+            CandidateVotes[candidate_name] = 1
         else:
-            Candidate3Count =+1
-    CandidateCount.append(Candidate1Count, Candidate2Count, Candidate3Count)
-Candidate1Percent = Candidate1Count/TotalVotes        
-Candidate2Percent = Candidate2Count/TotalVotes
-Candidate3Percent = Candidate3Count/TotalVotes     
-VotesPerCandidate.append(Candidate1, Candidate1Percent, Candidate1Count, Candidate2, Candidate2Percent, Candidate2Count, Candidate3, Candidate3Percent, Candidate3Count)       
+            CandidateVotes[candidate_name] += 1
+    print(CandidateVotes)
+#Calculate the percentage of votes in a new array that includes candidate name and vote count
+CandidatePercentages = {candidate: (votes / TotalVotes) * 100 for candidate, votes in CandidateVotes.items()}
+print(CandidatePercentages)
+#Create a variable for the winner
+winner = max(CandidateVotes, key=CandidateVotes.get)
+#print(winner)
+#print final results
+print("Election Results")
+print(f"----------------------")
+print(f"Total Votes: {TotalVotes}")
+print(f"-----------------------")
+print(f"{CandidatePercentages}")
+print(f"----------------------")
+print(f"Winner: {winner}")
 
-print(f"Election Results\n"
-      f"------------------\n"
-      f"Total Votes: {TotalVotes}\n"
-      f"------------------\n"
-      f"{VotesPerCandidate}\n"
-      f"------------------\n")
-if Candidate1Count > Candidate2Count & Candidate3Count:
-    print(f"Winner: {Candidate1}")
-elif Candidate2Count > Candidate1Count & Candidate3Count:
-    print(f"Winner: {Candidate2}")
-else:
-    print(f"Winner: {Candidate3}")
